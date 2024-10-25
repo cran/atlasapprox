@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>atlasapprox (R interface)</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">atlasapprox (R interface)</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#installation" id="toc-installation">Installation</a></li>
+<li><a href="#usage" id="toc-usage">Usage</a></li>
+<li><a href="#available-organisms-or-species" id="toc-available-organisms-or-species">Available organisms or
+species</a></li>
+<li><a href="#organs-in-a-single-organism" id="toc-organs-in-a-single-organism">Organs in a single
+organism</a></li>
+<li><a href="#cell-types-within-an-organ" id="toc-cell-types-within-an-organ">Cell types within an organ</a></li>
+<li><a href="#gene-expression" id="toc-gene-expression">Gene
+expression</a></li>
+<li><a href="#markers" id="toc-markers">Markers</a></li>
+<li><a href="#finding-cells-that-highly-express-a-gene" id="toc-finding-cells-that-highly-express-a-gene">Finding cells that
+highly express a gene</a></li>
+<li><a href="#finding-similar-features" id="toc-finding-similar-features">Finding similar features</a></li>
+<li><a href="#data-sources" id="toc-data-sources">Data sources</a></li>
+</ul>
+</div>
+
+<p>Cell atlases such as Tabula Muris and Tabula Sapiens are multi-organ
+single cell omics data sets describing entire organisms. A cell atlas
+approximation is a lossy and lightweight compression of a cell atlas
+that can be streamed via the internet.</p>
+<p>This project enables biologists, doctors, and data scientist to
+quickly find answers for questions such as:</p>
+<ul>
+<li><em>What is the expression of a specific gene in human
+lung?</em></li>
+<li><em>What are the marker genes of a specific cell type in mouse
+pancreas</em>?</li>
+<li><em>What fraction of cells (of a specific type) express a gene of
+interest?</em></li>
+</ul>
+<hr />
+<p><strong>NOTE:</strong> These questions can be also asked in R,
+Python, JavaScript or in a language agnostic manner using the REST API
+(see <a href="https://atlasapprox.readthedocs.io">https://atlasapprox.readthedocs.io</a>).</p>
+<hr />
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>To install the R interface of <code>atlasapprox</code> from CRAN,
+use:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;atlasapprox&quot;</span>)</span></code></pre></div>
+</div>
+<div id="usage" class="section level2">
+<h2>Usage</h2>
+<p>To use the package, you must first load it:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;atlasapprox&quot;</span>)</span></code></pre></div>
+<p>Now you have all <code>atlasapprox</code> functions available.</p>
+</div>
+<div id="available-organisms-or-species" class="section level2">
+<h2>Available organisms or species</h2>
+<p>The easiest way to explore atlas approximations is to query a list of
+available organisms:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>organisms <span class="ot">&lt;-</span> <span class="fu">GetOrganisms</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">print</span>(organisms)</span></code></pre></div>
+<pre><code>##  [1] &quot;a_queenslandica&quot; &quot;a_thaliana&quot;      &quot;c_elegans&quot;       &quot;c_gigas&quot;        
+##  [5] &quot;c_hemisphaerica&quot; &quot;d_melanogaster&quot;  &quot;d_rerio&quot;         &quot;f_vesca&quot;        
+##  [9] &quot;h_miamia&quot;        &quot;h_sapiens&quot;       &quot;h_vulgaris&quot;      &quot;i_pulchra&quot;      
+## [13] &quot;l_minuta&quot;        &quot;m_leidyi&quot;        &quot;m_murinus&quot;       &quot;m_musculus&quot;     
+## [17] &quot;n_vectensis&quot;     &quot;o_sativa&quot;        &quot;p_crozieri&quot;      &quot;p_dumerilii&quot;    
+## [21] &quot;s_lacustris&quot;     &quot;s_mansoni&quot;       &quot;s_mediterranea&quot;  &quot;s_pistillata&quot;   
+## [25] &quot;s_purpuratus&quot;    &quot;t_adhaerens&quot;     &quot;t_aestivum&quot;      &quot;x_laevis&quot;       
+## [29] &quot;z_mays&quot;</code></pre>
+</div>
+<div id="organs-in-a-single-organism" class="section level2">
+<h2>Organs in a single organism</h2>
+<p>Once you know what species you are interested in, you can explore the
+list of organs from that species for which an atlas approximation is
+available:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>human_organs <span class="ot">&lt;-</span> <span class="fu">GetOrgans</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">print</span>(human_organs)</span></code></pre></div>
+<pre><code>##  [1] &quot;bladder&quot;   &quot;blood&quot;     &quot;colon&quot;     &quot;eye&quot;       &quot;fat&quot;       &quot;gut&quot;      
+##  [7] &quot;heart&quot;     &quot;kidney&quot;    &quot;liver&quot;     &quot;lung&quot;      &quot;lymphnode&quot; &quot;mammary&quot;  
+## [13] &quot;marrow&quot;    &quot;muscle&quot;    &quot;pancreas&quot;  &quot;prostate&quot;  &quot;salivary&quot;  &quot;skin&quot;     
+## [19] &quot;spleen&quot;    &quot;thymus&quot;    &quot;tongue&quot;    &quot;trachea&quot;   &quot;uterus&quot;</code></pre>
+</div>
+<div id="cell-types-within-an-organ" class="section level2">
+<h2>Cell types within an organ</h2>
+<p>The next level of zoom is to query the list of cell types that make
+up an organ of choice, e.g.:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>cell_types <span class="ot">&lt;-</span> <span class="fu">GetCelltypes</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>, <span class="at">organ =</span> <span class="st">&#39;Lung&#39;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">print</span>(cell_types)</span></code></pre></div>
+<pre><code>##  [1] &quot;neutrophil&quot;             &quot;basophil&quot;               &quot;monocyte&quot;              
+##  [4] &quot;macrophage&quot;             &quot;dendritic&quot;              &quot;B&quot;                     
+##  [7] &quot;plasma&quot;                 &quot;T&quot;                      &quot;NK&quot;                    
+## [10] &quot;plasmacytoid&quot;           &quot;goblet&quot;                 &quot;AT1&quot;                   
+## [13] &quot;AT2&quot;                    &quot;club&quot;                   &quot;ciliated&quot;              
+## [16] &quot;basal&quot;                  &quot;serous&quot;                 &quot;mucous&quot;                
+## [19] &quot;arterial&quot;               &quot;venous&quot;                 &quot;capillary&quot;             
+## [22] &quot;CAP2&quot;                   &quot;lymphatic&quot;              &quot;fibroblast&quot;            
+## [25] &quot;alveolar fibroblast&quot;    &quot;smooth muscle&quot;          &quot;vascular smooth muscle&quot;
+## [28] &quot;pericyte&quot;               &quot;mesothelial&quot;            &quot;ionocyte&quot;</code></pre>
+<hr />
+<p><strong>NOTE:</strong> Although cell atlases aim to cover
+<em>all</em> cell types from a tissue, rare types might be missing
+because of limited sampling or inaccurate annotation. If you think a
+cell type is missing from a tissue, please contact fabio DOT zanini AT
+unsw DOT edu DOT au.</p>
+<hr />
+</div>
+<div id="gene-expression" class="section level2">
+<h2>Gene expression</h2>
+<p>If you have some genes you are interested in, you can query their
+expression across cell types in the organ of choice:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>expression <span class="ot">&lt;-</span> <span class="fu">GetAverage</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>, <span class="at">organ =</span> <span class="st">&#39;Lung&#39;</span>, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&#39;PTPRC&#39;</span>, <span class="st">&#39;COL1A1&#39;</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">print</span>(expression)</span></code></pre></div>
+<pre><code>##                               PTPRC       COL1A1
+## neutrophil             2.231271e+01  0.014522638
+## basophil               2.443684e+00  0.005077871
+## monocyte               7.794549e+00  0.003399504
+## macrophage             2.801027e+00  0.002812853
+## dendritic              4.313318e+00  0.013302779
+## B                      3.000779e+00  0.000000000
+## plasma                 4.200674e-01  0.009642163
+## T                      1.051312e+01  0.009203196
+## NK                     1.143152e+01  0.063305810
+## plasmacytoid           2.168309e+00  0.000000000
+## goblet                 1.898965e-01  0.145349205
+## AT1                    9.707276e-02  0.109001435
+## AT2                    1.457898e-01  0.058521412
+## club                   3.052110e-01  0.071080528
+## ciliated               2.264476e-01  0.060997065
+## basal                  2.570614e-01  0.064534329
+## serous                 3.813045e-01  0.000000000
+## mucous                 0.000000e+00  0.116527453
+## arterial               1.409595e-01  0.031918123
+## venous                 3.115328e-01  0.007172978
+## capillary              1.500604e-01  0.004225238
+## CAP2                   1.768180e-01  0.022919910
+## lymphatic              2.947334e-04  0.000000000
+## fibroblast             5.332901e-02 10.089125633
+## alveolar fibroblast    1.934833e-01  4.771382809
+## smooth muscle          5.999142e-01  2.049613953
+## vascular smooth muscle 4.121004e-01  2.203665972
+## pericyte               6.380575e-01  0.038223870
+## mesothelial            5.869431e-01  1.449272752
+## ionocyte               5.413984e-01  0.000000000</code></pre>
+<p>You can also request not only the average <em>level</em> of
+expression, but the <em>fraction</em> of cells within each type that
+express the gene:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>fraction_expressing <span class="ot">&lt;-</span> <span class="fu">GetFractionDetected</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>, <span class="at">organ =</span> <span class="st">&#39;Lung&#39;</span>, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">&#39;PTPRC&#39;</span>, <span class="st">&#39;COL1A1&#39;</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">print</span>(fraction_expressing)</span></code></pre></div>
+<pre><code>##                             PTPRC      COL1A1
+## neutrophil             0.92528737 0.011494253
+## basophil               0.65014577 0.002915452
+## monocyte               0.93330902 0.002186589
+## macrophage             0.94777960 0.004276316
+## dendritic              0.94303799 0.009493670
+## B                      0.60919541 0.000000000
+## plasma                 0.36567163 0.014925373
+## T                      0.93114001 0.003825555
+## NK                     0.95454544 0.007575758
+## plasmacytoid           0.72222221 0.000000000
+## goblet                 0.16710876 0.172413796
+## AT1                    0.07109005 0.085308060
+## AT2                    0.11589766 0.115569651
+## club                   0.10886320 0.047206167
+## ciliated               0.11627907 0.069767445
+## basal                  0.12568556 0.049360145
+## serous                 0.20000000 0.000000000
+## mucous                 0.00000000 0.375000000
+## arterial               0.05347594 0.010695187
+## venous                 0.10236221 0.007874016
+## capillary              0.05678023 0.002672011
+## CAP2                   0.05975395 0.003514939
+## lymphatic              0.02127660 0.000000000
+## fibroblast             0.03116883 0.890909076
+## alveolar fibroblast    0.07098766 0.595678985
+## smooth muscle          0.11206897 0.534482777
+## vascular smooth muscle 0.11250000 0.500000000
+## pericyte               0.13145539 0.014084507
+## mesothelial            0.29411766 0.764705896
+## ionocyte               0.21052632 0.000000000</code></pre>
+<p>To get a list of all available features (e.g. genes) for an organism,
+you can use:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">GetFeatures</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co"># To show just the first 20 genes</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(genes, <span class="dv">20</span>))</span></code></pre></div>
+<pre><code>##  [1] &quot;A1BG&quot;        &quot;A1BG-AS1&quot;    &quot;A1CF&quot;        &quot;A2M&quot;         &quot;A2M-AS1&quot;    
+##  [6] &quot;A2ML1&quot;       &quot;A2ML1-AS1&quot;   &quot;A2ML1-AS2&quot;   &quot;A2MP1&quot;       &quot;A3GALT2&quot;    
+## [11] &quot;A4GALT&quot;      &quot;A4GNT&quot;       &quot;AAAS&quot;        &quot;AACS&quot;        &quot;AACSP1&quot;     
+## [16] &quot;AADAC&quot;       &quot;AADACL2&quot;     &quot;AADACL2-AS1&quot; &quot;AADACL3&quot;     &quot;AADACL4&quot;</code></pre>
+</div>
+<div id="markers" class="section level2">
+<h2>Markers</h2>
+<p>Each cell type expressed specific genes that contribute to its unique
+biological function, called markers. To request a list of markers for
+your cell type of choice:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>markers <span class="ot">&lt;-</span> <span class="fu">GetMarkers</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>, <span class="at">organ =</span> <span class="st">&#39;Lung&#39;</span>, <span class="at">cell_type =</span> <span class="st">&#39;fibroblast&#39;</span>, <span class="at">number =</span> <span class="dv">5</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">print</span>(markers)</span></code></pre></div>
+<pre><code>## [1] &quot;MFAP5&quot;     &quot;PI16&quot;      &quot;RPL10P6&quot;   &quot;EEF1A1P11&quot; &quot;RPL7P9&quot;</code></pre>
+<hr />
+<p><strong>NOTE</strong>: There are multiple methods to compute marker
+genes. The current version of the API uses one specific method, but
+future versions aim to give the user choice as of which method they
+prefer.</p>
+<hr />
+</div>
+<div id="finding-cells-that-highly-express-a-gene" class="section level2">
+<h2>Finding cells that highly express a gene</h2>
+<p>If you’re interested in knowing which cell types express your gene of
+interest the most, across all organs:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>highest_expressors <span class="ot">&lt;-</span> <span class="fu">GetHighestMeasurement</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>, <span class="at">feature =</span> <span class="st">&#39;PTPRC&#39;</span>, <span class="at">number =</span> <span class="dv">5</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">print</span>(highest_expressors)</span></code></pre></div>
+<pre><code>##    Cell type    Organ  Average
+## 1 neutrophil      fat 32.03100
+## 2 neutrophil    blood 23.67732
+## 3 neutrophil   spleen 23.54425
+## 4 neutrophil prostate 23.49050
+## 5 neutrophil  trachea 23.17156</code></pre>
+</div>
+<div id="finding-similar-features" class="section level2">
+<h2>Finding similar features</h2>
+<p>If you want to find other features (genes) that show similar
+expression patterns to a feature of interest. To get a list of similar
+features for your gene of choice:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>similar_genes <span class="ot">&lt;-</span> <span class="fu">GetSimilarFeatures</span>(<span class="at">organism =</span> <span class="st">&#39;h_sapiens&#39;</span>, <span class="at">organ =</span> <span class="st">&#39;lung&#39;</span>, <span class="at">feature =</span> <span class="st">&#39;PTPRC&#39;</span>, <span class="at">number =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">&#39;correlation&#39;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">print</span>(similar_genes)</span></code></pre></div>
+<pre><code>##   Similar features  distances
+## 1             LCP1 0.01616174
+## 2             CD53 0.03778654
+## 3              WAS 0.04407340
+## 4            HCLS1 0.05033290
+## 5         ARHGAP30 0.05041230</code></pre>
+<hr />
+<p><strong>NOTE:</strong> There are multiple methods to compute feature
+similarity. The available methods are:</p>
+<ul>
+<li>correlation (default): Pearson correlation of the fraction of cells
+expressing each gene</li>
+<li>cosine: Cosine similarity of the fraction of expressing cells</li>
+<li>euclidean: Euclidean distance of average expression levels</li>
+<li>manhattan: Manhattan distance of average expression levels</li>
+<li>log-euclidean: Euclidean distance after log-transformation (useful
+for sparse features)</li>
+</ul>
+<hr />
+</div>
+<div id="data-sources" class="section level2">
+<h2>Data sources</h2>
+<p><code>atlasapprox</code> relies upon available cell atlases kindly
+released for public use:</p>
+<ul>
+<li><a href="https://www.nature.com/articles/s41559-018-0575-6">A.
+queenslandica - Sebé-Pedrós et al 2018</a></li>
+<li>A. thaliana: <a href="https://doi.org/10.1016/j.devcel.2022.01.008">Shahan et al
+2022</a> [root], <a href="https://doi.org/10.1101/2024.03.04.583414">Xu
+et al 2024</a> [shoot]</li>
+<li><a href="https://www.science.org/doi/10.1126/science.aam8940">C.
+elegans - Cao et al. 2017</a></li>
+<li><a href="https://doi.org/10.1126/sciadv.adg6034">C. gigas - Piovani
+et al 2023</a></li>
+<li><a href="https://www.science.org/doi/10.1126/sciadv.abh1683">C.
+hemisphaerica - Chari et al. 2021</a></li>
+<li><a href="https://doi.org/10.1126/science.abk2432">D. melanogaster -
+Li et al. 2022</a></li>
+<li><a href="https://www.science.org/doi/10.1126/science.aar4362">D.
+rerio - Wagner et al. 2018</a></li>
+<li><a href="https://doi.org/10.1093/hr/uhab055">F. vesca - Bai et al
+2022</a></li>
+<li><a href="https://www.nature.com/articles/s41467-023-38016-4">H.
+miamia - Hulett et al. 2023</a></li>
+<li>H. sapiens: <a href="https://doi.org/10.1016/j.cell.2021.10.024">ATAC - Zhang et
+al. Ren</a>, <a href="https://www.science.org/doi/10.1126/science.abl4896">RNA - Tabula
+Sapiens</a></li>
+<li><a href="https://doi.org/10.1126/science.aav9314">H. vulgaris -
+Sieert et al 2019</a></li>
+<li><a href="https://doi.org/10.1093/molbev/msaa333">I. pulchra - Duruz
+et al. 2020</a></li>
+<li><a href="https://doi.org/10.1093/plphys/kiab564">L. minuta -
+Abramson et al. 2022</a></li>
+<li><a href="https://www.nature.com/articles/s41559-018-0575-6">M.
+leidyi - Sebé-Pedrós et al 2018</a></li>
+<li><a href="https://www.biorxiv.org/content/10.1101/2021.12.12.469460v2">M.
+murinus - Tabula Microcebus</a></li>
+<li><a href="https://www.nature.com/articles/s41586-020-2496-1">M.
+musculus - Tabula Muris Senis 2020</a></li>
+<li><a href="https://doi.org/10.1016/j.celrep.2022.111370">N. vectensis
+- Steger et al 2022</a></li>
+<li><a href="https://doi.org/10.1038/s41467-021-22352-4">O. sativa -
+Zhang et al 2021</a></li>
+<li><a href="https://doi.org/10.1126/sciadv.adg6034">P. crozieri -
+Piovani et al 2023</a></li>
+<li><a href="https://doi.org/10.1093/molbev/msx336">P. dumerilii - Achim
+et al 2017</a></li>
+<li><a href="https://www.science.org/doi/10.1126/science.abj2949">S.
+lacustris - Musser et al. 2021</a></li>
+<li><a href="https://www.nature.com/articles/s41467-020-20794-w">S.
+mansoni - Li et al. 2021</a></li>
+<li><a href="https://doi.org/10.1126/science.aaq1723">S. mediterranea -
+Plass et al. 2018</a></li>
+<li><a href="https://doi.org/10.1016/j.cell.2021.04.005">S. pistillata -
+Levi et al. 2021</a></li>
+<li><a href="https://doi.org/10.7554/eLife.70416">S. purpuratus -
+Paganos et al 2021</a></li>
+<li><a href="https://www.nature.com/articles/s41559-018-0575-6">T.
+adhaerens - Sebé-Pedrós et al 2018</a></li>
+<li><a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-023-02908-x">T.
+aestivum - Zhang et al 2023</a></li>
+<li><a href="https://www.nature.com/articles/s41467-022-31949-2">X.
+laevis - Liao et al. 2022</a></li>
+<li>Z. mays: <a href="https://doi.org/10.1016/j.cell.2021.04.014">Marand
+et al 2021</a> [seedling], <a href="https://doi.org/10.1101/2024.03.04.583414">Xu et al 2024</a>
+[eartip]</li>
+</ul>
+<p>We are grateful to all authors above for their help and committment
+to open science.</p>
+<p>To get the data sources in the package, call:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>data_sources <span class="ot">&lt;-</span> <span class="fu">GetDataSources</span>()</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">print</span>(data_sources)</span></code></pre></div>
+<hr />
+<p><strong>NOTE:</strong> Although the original cell type annotations of
+these data sets are mostly preserved, a quality check is performed
+before computing approximations. During this step, some cell types might
+be filtered out, renamed, or split into multiple subannotations. If you
+found a problem in the data that indicates misannotations, please reach
+out to fabio DOT zanini AT unsw DOT edu DOT au and we will endeavour to
+fix it.</p>
+<hr />
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
